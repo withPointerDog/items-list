@@ -1,4 +1,4 @@
-// ****** select items **********
+//select items
 const form = document.querySelector(".grocery-form");
 const clickMsg = document.querySelector(".alert");
 const input = document.getElementById("grocery");
@@ -10,9 +10,9 @@ const sbmtBtn = document.querySelector(".submit-btn");
 let editElement;
 let editFlag = false;
 let editID = "";
-// ****** event listeners **********
+//event listeners
 form.addEventListener("submit", addItem);
-// ****** functions **********
+//functions
 function addItem(event) {
   event.preventDefault();
   const valInput = input.value;
@@ -53,7 +53,52 @@ function dsplTxtMssg(text, clss = "success") {
     clickMsg.textContent = "";
     clickMsg.classList.remove(`alert-${clss}`);
   }, 2000);
-}
-// ****** local storage **********
 
-// ****** setup items **********
+  setBackToDefault();
+  localStorage.removeItem("list");
+}
+
+function setBackToDefault() {
+  input.value = "";
+  editFlag = false;
+  editID = "";
+  sbmtBtn.textContent = "submit";
+}
+//local storage
+function addToLocalStorage(id, value) {
+  const grocery = { id, value };
+  let items = getLocalStorage();
+  items.push(grocery);
+  localStorage.setItem("list", JSON.stringify(items));
+}
+
+function getLocalStorage() {
+  return localStorage.getItem("list")
+    ? JSON.parse(localStorage.getItem("list"))
+    : [];
+}
+
+function removeFromLocalStorage(id) {
+  let items = getLocalStorage();
+
+  items = items.filter((item) => {
+    if (item.id !== id) {
+      return item;
+    }
+  });
+
+  localStorage.setItem("list", JSON.stringify(items));
+}
+
+function editLocalStorage(id, value) {
+  let items = getLocalStorage();
+
+  items = items.map((item) => {
+    if (item.id === id) {
+      item.value = value;
+    }
+    return item;
+  });
+  localStorage.setItem("list", JSON.stringify(items));
+}
+//setup items
