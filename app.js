@@ -19,7 +19,25 @@ function addItem(event) {
   const id = new Date().getTime().toString();
 
   if (valInput !== "" && editFlag === false) {
+    const elmnt = document.createElement("article");
+    const atr = document.createAttribute("data-id");
+    atr.value = id;
+    elmnt.setAttributeNode(atr);
+    elmnt.classList.add("grocery-item");
+    elmnt.innerHTML = `
+                        <p class="title">${valInput}</p>
+                          <div class="btn-container">
+                          <button type="button" class="edit-btn">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button type="button" class="delete-btn">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                        `;
+    list.appendChild(elmnt);
     dsplTxtMssg("Item Added To The List", "success");
+    list.classList.add("show-container");
   } else if (valInput !== "" && editFlag === true) {
     dsplTxtMssg("Value Changed");
   } else {
