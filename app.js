@@ -35,6 +35,12 @@ function addItem(event) {
                           </button>
                         </div>
                         `;
+    const deleteBtn = elmnt.querySelector(".delete-btn");
+    deleteBtn.addEventListener("click", deleteItem);
+
+    const editBtn = elmnt.querySelector(".edit-btn");
+    editBtn.addEventListener("click", editItem);
+
     list.appendChild(elmnt);
     dsplTxtMssg("Item Added To The List", "success");
     list.classList.add("show-container");
@@ -57,7 +63,27 @@ function dsplTxtMssg(text, clss = "success") {
   setBackToDefault();
   localStorage.removeItem("list");
 }
+
+// delete item
+
+function deleteItem(e) {
+  const element = e.currentTarget.parentElement.parentElement;
+  const id = element.dataset.id;
+
+  list.removeChild(element);
+
+  if (list.children.length === 0) {
+    container.classList.remove("show-container");
+  }
+  displayAlert("item removed", "danger");
+
+  setBackToDefault();
+  // remove from local storage
+  removeFromLocalStorage(id);
+}
+
 //edit item
+
 function editItem(event) {
   const element = event.currentTarget.parentElement.parentElement;
   // set edit item
