@@ -10,22 +10,29 @@ const sbmtBtn = document.querySelector(".submit-btn");
 let editElement;
 let editFlag = false;
 let editID = "";
+
 //event listeners
+
+// submit form
 form.addEventListener("submit", addItem);
+// clear list
+clearBtn.addEventListener("click", clearItems);
+// display items onload
+window.addEventListener("DOMContentLoaded", setupItems);
 //functions
 function addItem(event) {
   event.preventDefault();
-  const valInput = input.value;
+  const value = input.value;
   const id = new Date().getTime().toString();
 
-  if (valInput !== "" && editFlag === false) {
+  if (value !== "" && editFlag === false) {
     const elmnt = document.createElement("article");
     const atr = document.createAttribute("data-id");
     atr.value = id;
     elmnt.setAttributeNode(atr);
     elmnt.classList.add("grocery-item");
     elmnt.innerHTML = `
-                        <p class="title">${valInput}</p>
+                        <p class="title">${value}</p>
                           <div class="btn-container">
                           <button type="button" class="edit-btn">
                             <i class="fas fa-edit"></i>
@@ -44,8 +51,15 @@ function addItem(event) {
     list.appendChild(elmnt);
     dsplTxtMssg("Item Added To The List", "success");
     list.classList.add("show-container");
-  } else if (valInput !== "" && editFlag === true) {
+    addToLocalStorage(id, value);
+    // set back to default
+    setBackToDefault();
+  } else if (value !== "" && editFlag === true) {
+    editElement.innerHTML = value;
+
     dsplTxtMssg("Value Changed");
+    editLocalStorage(editID, value);
+    setBackToDefault();
   } else {
     dsplTxtMssg("Please Enter Value", "danger");
   }
@@ -60,14 +74,27 @@ function dsplTxtMssg(text, clss = "success") {
     clickMsg.classList.remove(`alert-${clss}`);
   }, 2000);
 
+  localStorage.removeItem("list");
+}
+
+// clear items
+function clearItems() {
+  const items = document.querySelectorAll(".grocery-item");
+  if (items.length > 0) {
+    items.forEach((item) => {
+      list.removeChild(item);
+    });
+  }
+  container.classList.remove("show-container");
+  dsplTxtMssg("empty list", "danger");
   setBackToDefault();
   localStorage.removeItem("list");
 }
 
 // delete item
 
-function deleteItem(e) {
-  const element = e.currentTarget.parentElement.parentElement;
+function deleteItem(event) {
+  const element = event.currentTarget.parentElement.parentElement;
   const id = element.dataset.id;
 
   list.removeChild(element);
@@ -75,7 +102,7 @@ function deleteItem(e) {
   if (list.children.length === 0) {
     container.classList.remove("show-container");
   }
-  displayAlert("item removed", "danger");
+  dsplTxtMssg("item removed", "danger");
 
   setBackToDefault();
   // remove from local storage
@@ -89,7 +116,7 @@ function editItem(event) {
   // set edit item
   editElement = event.currentTarget.parentElement.previousElementSibling;
   // set form value
-  grocery.value = editElement.innerHTML;
+  input.value = editElement.innerHTML;
   editFlag = true;
   editID = element.dataset.id;
   //
@@ -104,9 +131,9 @@ function setBackToDefault() {
 }
 //local storage
 function addToLocalStorage(id, value) {
-  const grocery = { id, value };
+  const input = { id, value };
   let items = getLocalStorage();
-  items.push(grocery);
+  items.push(input);
   localStorage.setItem("list", JSON.stringify(items));
 }
 
